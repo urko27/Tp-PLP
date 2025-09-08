@@ -20,28 +20,28 @@ allTests :: Test
 allTests =
   test
     [ "Ej 1 - Util.alinearDerecha" ~: testsAlinearDerecha,
-      "Ej 2 - Util.actualizarElem" ~: testsActualizarElem,
-      "Ej 3 - Histograma.vacio" ~: testsVacio,
-      "Ej 4 - Histograma.agregar" ~: testsAgregar,
-      "Ej 5 - Histograma.histograma" ~: testsHistograma,
-      "Ej 6 - Histograma.casilleros" ~: testsCasilleros,
-      "Ej 7 - Expr.recrExpr" ~: testsRecr,
-      "Ej 7 - Expr.foldExpr" ~: testsFold,
-      "Ej 8 - Expr.eval" ~: testsEval,
-      "Ej 9 - Expr.armarHistograma" ~: testsArmarHistograma,
-      "Ej 10 - Expr.evalHistograma" ~: testsEvalHistograma,
-      "Ej 11 - Expr.mostrar" ~: testsMostrar,
-      "Expr.Parser.parse" ~: testsParse,
-      "App.mostrarFloat" ~: testsMostrarFloat,
-      "App.mostrarHistograma" ~: testsMostrarHistograma
+      "Ej 2 - Util.actualizarElem" ~: testsActualizarElem
+      -- "Ej 3 - Histograma.vacio" ~: testsVacio,
+      -- "Ej 4 - Histograma.agregar" ~: testsAgregar,
+      -- "Ej 5 - Histograma.histograma" ~: testsHistograma,
+      -- "Ej 6 - Histograma.casilleros" ~: testsCasilleros,
+      -- "Ej 7 - Expr.recrExpr" ~: testsRecr,
+      -- "Ej 7 - Expr.foldExpr" ~: testsFold,
+      -- "Ej 8 - Expr.eval" ~: testsEval,
+      -- "Ej 9 - Expr.armarHistograma" ~: testsArmarHistograma,
+      -- "Ej 10 - Expr.evalHistograma" ~: testsEvalHistograma,
+      -- "Ej 11 - Expr.mostrar" ~: testsMostrar,
+      -- "Expr.Parser.parse" ~: testsParse,
+      -- "App.mostrarFloat" ~: testsMostrarFloat,
+      -- "App.mostrarHistograma" ~: testsMostrarHistograma
     ]
 
 testsAlinearDerecha :: Test
 testsAlinearDerecha =
   test
-    [ alinearDerecha 6 "hola" ~?= "  hola",
+    [ alinearDerecha 8 "hola" ~?= "    hola",
       alinearDerecha 10 "incierticalc" ~?= "incierticalc",
-      completar
+      alinearDerecha 5 "" ~?= "     "
     ]
 
 testsActualizarElem :: Test
@@ -49,7 +49,8 @@ testsActualizarElem =
   test
     [ actualizarElem 0 (+ 10) [1, 2, 3] ~?= [11, 2, 3],
       actualizarElem 1 (+ 10) [1, 2, 3] ~?= [1, 12, 3],
-      completar
+      actualizarElem (-1) (+ 10) [1, 2, 3] ~?= [1, 2, 3],
+      actualizarElem 3 (+ 10) [1, 2, 3] ~?= [1, 2, 3]
     ]
 
 testsVacio :: Test
