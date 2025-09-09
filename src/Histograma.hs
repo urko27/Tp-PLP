@@ -32,7 +32,7 @@ data Histograma = Histograma Float Float [Int]
 -- valores en el rango y 2 casilleros adicionales para los valores fuera del rango.
 -- Require que @l < u@ y @n >= 1@.
 vacio :: Int -> (Float, Float) -> Histograma
-vacio n (l, u) = Histograma (l) ((u - l)/fromIntegral n) ([0 | _ <- [1..n+2]])
+vacio tamaño (inferior, superior) = Histograma (inferior) ((superior - inferior)/fromIntegral tamaño) ([0 | _ <- [1..tamaño+2]])
 
 -- | Agrega un valor al histograma.
 agregar :: Float -> Histograma -> Histograma
@@ -45,7 +45,7 @@ agregar x (Histograma l tamIntervalo cs) = Histograma l tamIntervalo (actualizar
 
 -- | Arma un histograma a partir de una lista de números reales con la cantidad de casilleros y rango indicados.
 histograma :: Int -> (Float, Float) -> [Float] -> Histograma
-histograma n r xs = error "COMPLETAR EJERCICIO 5"
+histograma tamaño (inf, sup) valores = foldr agregar (vacio tamaño (inf, sup)) valores
 
 -- | Un `Casillero` representa un casillero del histograma con sus límites, cantidad y porcentaje.
 -- Invariante: Sea @Casillero m1 m2 c p@ entonces @m1 < m2@, @c >= 0@, @0 <= p <= 100@

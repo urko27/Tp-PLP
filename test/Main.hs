@@ -20,10 +20,10 @@ allTests :: Test
 allTests =
   test
     [ "Ej 1 - Util.alinearDerecha" ~: testsAlinearDerecha,
-      "Ej 2 - Util.actualizarElem" ~: testsActualizarElem
+      "Ej 2 - Util.actualizarElem" ~: testsActualizarElem,
       -- "Ej 3 - Histograma.vacio" ~: testsVacio,
       -- "Ej 4 - Histograma.agregar" ~: testsAgregar,
-      -- "Ej 5 - Histograma.histograma" ~: testsHistograma,
+      "Ej 5 - Histograma.histograma" ~: testsHistograma
       -- "Ej 6 - Histograma.casilleros" ~: testsCasilleros,
       -- "Ej 7 - Expr.recrExpr" ~: testsRecr,
       -- "Ej 7 - Expr.foldExpr" ~: testsFold,
@@ -103,7 +103,7 @@ testsHistograma :: Test
 testsHistograma =
   test
     [ histograma 4 (1, 5) [1, 2, 3] ~?= agregar 3 (agregar 2 (agregar 1 (vacio 4 (1, 5)))),
-      completar
+      histograma 2 (4, 5) [1, 2, 5] ~?= agregar 5 (agregar 2 (agregar 1 (vacio 2 (4, 5))))
     ]
 
 testsCasilleros :: Test
