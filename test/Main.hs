@@ -23,8 +23,8 @@ allTests =
       "Ej 2 - Util.actualizarElem" ~: testsActualizarElem,
       -- "Ej 3 - Histograma.vacio" ~: testsVacio,
       -- "Ej 4 - Histograma.agregar" ~: testsAgregar,
-      "Ej 5 - Histograma.histograma" ~: testsHistograma
-      -- "Ej 6 - Histograma.casilleros" ~: testsCasilleros,
+      "Ej 5 - Histograma.histograma" ~: testsHistograma,
+      "Ej 6 - Histograma.casilleros" ~: testsCasilleros
       -- "Ej 7 - Expr.recrExpr" ~: testsRecr,
       -- "Ej 7 - Expr.foldExpr" ~: testsFold,
       -- "Ej 8 - Expr.eval" ~: testsEval,
@@ -103,12 +103,24 @@ testsHistograma :: Test
 testsHistograma =
   test
     [ histograma 4 (1, 5) [1, 2, 3] ~?= agregar 3 (agregar 2 (agregar 1 (vacio 4 (1, 5)))),
-      histograma 2 (4, 5) [1, 2, 5] ~?= agregar 5 (agregar 2 (agregar 1 (vacio 2 (4, 5))))
+      casilleros (histograma 1 (3.0, 5.0) []) ~?= [
+        Casillero infinitoNegativo 3.0 0 0,
+        Casillero 3.0 5.0 0 0,
+        Casillero 5.0 infinitoPositivo 0 0
+      ],
+      casilleros (histograma 3 (2.0, 5.0) [2.2, 8.0, 2.3, 5.0, -1.0]) ~?= [
+        Casillero infinitoNegativo 2.0 1 20.0,
+        Casillero 2.0 3.0 2 40.0,
+        Casillero 3.0 4.0 0 0,
+        Casillero 4.0 5.0 0 0,
+        Casillero 5.0 infinitoPositivo 2 40.0
+      ]
     ]
 
 testsCasilleros :: Test
 testsCasilleros =
-  test
+  let equiprobable = agregar 1000.0 (agregar 4.7 (agregar 2.0 (agregar 1.5 (agregar (-5.0) (vacio 3 (0, 6))))))
+  in test
     [ casilleros (vacio 3 (0, 6))
         ~?= [ Casillero infinitoNegativo 0.0 0 0.0,
               Casillero 0.0 2.0 0 0.0,
@@ -123,7 +135,13 @@ testsCasilleros =
               Casillero 4.0 6.0 0 0.0,
               Casillero 6.0 infinitoPositivo 0 0.0
             ],
-      completar
+      casilleros equiprobable
+        ~?= [ Casillero infinitoNegativo 0.0 1 20.0,
+              Casillero 0.0 2.0 1 20.0,
+              Casillero 2.0 4.0 1 20.0,
+              Casillero 4.0 6.0 1 20.0,
+              Casillero 6.0 infinitoPositivo 1 20.0
+            ]
     ]
 
 testsRecr :: Test
