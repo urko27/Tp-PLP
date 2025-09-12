@@ -46,7 +46,7 @@ agregar x (Histograma l tamIntervalo cs) = Histograma l tamIntervalo (actualizar
 
 -- | Arma un histograma a partir de una lista de números reales con la cantidad de casilleros y rango indicados.
 histograma :: Int -> (Float, Float) -> [Float] -> Histograma
-histograma tamaño (inf, sup) valores = foldr agregar (vacio tamaño (inf, sup)) valores
+histograma tamaño (inf, sup) = foldr agregar (vacio tamaño (inf, sup))
 
 -- | Un `Casillero` representa un casillero del histograma con sus límites, cantidad y porcentaje.
 -- Invariante: Sea @Casillero m1 m2 c p@ entonces @m1 < m2@, @c >= 0@, @0 <= p <= 100@
