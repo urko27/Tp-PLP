@@ -21,8 +21,8 @@ allTests =
   test
     [ "Ej 1 - Util.alinearDerecha" ~: testsAlinearDerecha,
       "Ej 2 - Util.actualizarElem" ~: testsActualizarElem,
-      -- "Ej 3 - Histograma.vacio" ~: testsVacio,
-      -- "Ej 4 - Histograma.agregar" ~: testsAgregar,
+      "Ej 3 - Histograma.vacio" ~: testsVacio,
+      "Ej 4 - Histograma.agregar" ~: testsAgregar,
       "Ej 5 - Histograma.histograma" ~: testsHistograma,
       "Ej 6 - Histograma.casilleros" ~: testsCasilleros
       -- "Ej 7 - Expr.recrExpr" ~: testsRecr,
@@ -67,8 +67,7 @@ testsVacio =
               Casillero 2 4 0 0,
               Casillero 4 6 0 0,
               Casillero 6 infinitoPositivo 0 0
-            ],
-      completar
+            ]
     ]
 
 testsAgregar :: Test
@@ -96,7 +95,13 @@ testsAgregar =
                   Casillero 4 6 0 0,
                   Casillero 6 infinitoPositivo 0 0
                 ],
-          completar
+          casilleros (agregar 8(agregar 5(agregar 2 (agregar 1 (agregar (-1) h0)))))
+            ~?= [ Casillero infinitoNegativo 0 1 20, -- 20% de los valores en cada casillero
+                  Casillero 0 2 1 20,
+                  Casillero 2 4 1 20,
+                  Casillero 4 6 1 20,
+                  Casillero 6 infinitoPositivo 1 20
+                ]
         ]
 
 testsHistograma :: Test
