@@ -10,7 +10,7 @@ alinearDerecha n s = [' ' | _ <- [1..(n - length s)]] ++ s
 -- de la lista, devuelve la lista sin cambios.
 -- El primer elemento de la lista es el índice 0.
 actualizarElem :: Int -> (a -> a) -> [a] -> [a]
-actualizarElem n f xs = foldl (\acc x -> if length acc == n then acc ++ [(f x)] else acc ++ [x]) [] xs
+actualizarElem n f = foldl (\acc x -> if length acc == n then acc ++ [(f x)] else acc ++ [x]) []
 
 -- | infinito positivo (Haskell no tiene literal para +infinito)
 infinitoPositivo :: Float
