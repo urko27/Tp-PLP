@@ -29,8 +29,8 @@ allTests =
       -- "Ej 7 - Expr.foldExpr" ~: testsFold,
       "Ej 8 - Expr.eval" ~: testsEval,
       "Ej 9 - Expr.armarHistograma" ~: testsArmarHistograma,
-      "Ej 10 - Expr.evalHistograma" ~: testsEvalHistograma
-      -- "Ej 11 - Expr.mostrar" ~: testsMostrar,
+      "Ej 10 - Expr.evalHistograma" ~: testsEvalHistograma,
+      "Ej 11 - Expr.mostrar" ~: testsMostrar
       -- "Expr.Parser.parse" ~: testsParse,
       -- "App.mostrarFloat" ~: testsMostrarFloat,
       -- "App.mostrarHistograma" ~: testsMostrarHistograma
@@ -251,7 +251,25 @@ testsMostrar =
       mostrar (Suma (Mult (Suma (Const 1) (Const 2)) (Const 3)) (Const 4))
         ~?= "((1.0 + 2.0) * 3.0) + 4.0",
       mostrar (Mult (Suma (Suma (Const 1) (Const 2)) (Const 3)) (Const 4))
-        ~?= "(1.0 + 2.0 + 3.0) * 4.0"
+        ~?= "(1.0 + 2.0 + 3.0) * 4.0",
+      mostrar (Mult (Suma (Const 2) (Const 3)) (Const 4))
+        ~?= "(2.0 + 3.0) * 4.0",
+      mostrar (Mult (Const 2) (Suma (Const 3) (Const 4)))
+        ~?= "2.0 * (3.0 + 4.0)",
+      mostrar (Div (Div (Const 10) (Const 2)) (Const 5))
+        ~?= "(10.0 / 2.0) / 5.0",
+      mostrar (Div (Resta (Const 10) (Const 5)) (Const 2))
+        ~?= "(10.0 - 5.0) / 2.0",
+      mostrar (Div (Const 10) (Resta (Const 5) (Const 2)))
+        ~?= "10.0 / (5.0 - 2.0)",
+      mostrar (Resta (Const 10) (Mult (Const 5) (Const 2)))
+        ~?= "10.0 - 5.0 * 2.0",
+      mostrar (Suma (Mult (Resta (Const 5) (Const 2)) (Const 3)) (Div (Const 10) (Const 2)))
+        ~?= "((5.0 - 2.0) * 3.0) + 10.0 / 2.0",
+      mostrar (Div (Suma (Const 1) (Mult (Const 2) (Const 3))) (Suma (Const 4) (Const 5)))
+        ~?= "(1.0 + 2.0 * 3.0) / (4.0 + 5.0)",
+      mostrar (Resta (Resta (Rango 1 2) (Suma (Const 3) (Const 4))) (Mult (Const 5) (Suma (Const 6) (Const 7))))
+        ~?= "(1.0~2.0 - (3.0 + 4.0)) - 5.0 * (6.0 + 7.0)"
     ]
 
 testsMostrarFloat :: Test

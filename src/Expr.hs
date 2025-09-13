@@ -6,6 +6,7 @@ module Expr
     armarHistograma,
     evalHistograma,
     mostrar,
+    mostrarDebug
   )
 where
 
@@ -30,34 +31,32 @@ foldExpr :: (Float -> b) ->
             (b -> b -> b) ->          -- constructor Div 
             Expr -> b
 foldExpr cCte cRan cSum cRes cMul cDiv p = case p of
-                                    Const c -> cCte c
-                                    Rango a b -> cRan a b
-                                    Suma p q -> cSum (rec p) (rec q)
-                                    Resta p q -> cRes (rec p) (rec q)
-                                    Mult p q -> cMul (rec p) (rec q)
-                                    Div p q -> cDiv (rec p) (rec q)
-                                where
-                                    rec = foldExpr cCte cRan cSum cRes cMul cDiv
+    Const c -> cCte c
+    Rango a b -> cRan a b
+    Suma p q -> cSum (rec p) (rec q)
+    Resta p q -> cRes (rec p) (rec q)
+    Mult p q -> cMul (rec p) (rec q)
+    Div p q -> cDiv (rec p) (rec q)
+  where
+    rec = foldExpr cCte cRan cSum cRes cMul cDiv
                                     
 -- recrExpr :: ... anotar el tipo ...
-recrExpr :: (Float -> Expr -> (b, Gen))
-         -> (Float -> Float -> Gen -> Expr -> (b, Gen))
-         -> ( (b, Gen) -> (b, Gen) -> Expr -> (b, Gen))
-         -> ( (b, Gen) -> (b, Gen) -> Expr -> (b, Gen))
-         -> ( (b, Gen) -> (b, Gen) -> Expr -> (b, Gen))
-         -> ( (b, Gen) -> (b, Gen) -> Expr -> (b, Gen))
-         -> Expr -> Gen -> (b, Gen)
-recrExpr cCte cRan cSum cRes cMul cDiv p' g =
-  case p' of
-    Const c -> cCte c p'
-    Rango a b -> cRan a b g p'
-    Suma p q  -> handleExpr cSum p q g p'
-    Resta p q -> handleExpr cRes p q g p'
-    Mult p q  -> handleExpr cMul p q g p'
-    Div p q   -> handleExpr cDiv p q g p'
+recrExpr :: (Float -> b) ->       
+            (Float -> Float -> b) ->  -- constructor Rango
+            (b -> b -> Expr -> Expr -> b) ->          -- constructor Suma 
+            (b -> b -> Expr -> Expr -> b) ->          -- constructor Resta 
+            (b -> b -> Expr -> Expr -> b) ->          -- constructor Mult 
+            (b -> b -> Expr -> Expr -> b) ->          -- constructor Div 
+            Expr -> b
+recrExpr cCte cRan cSum cRes cMul cDiv p' = case p' of
+    Const c -> cCte c
+    Rango a b -> cRan a b
+    Suma p q -> cSum (rec p) (rec q) p q
+    Resta p q -> cRes (rec p) (rec q) p q
+    Mult p q -> cMul (rec p) (rec q) p q
+    Div p q -> cDiv (rec p) (rec q) p q
   where
     rec = recrExpr cCte cRan cSum cRes cMul cDiv
-    handleExpr op p q gen p' = op (rec p gen) (rec q (snd (rec p gen))) p'
 
 foldEval :: (Float -> (b, Gen))
          -> (Float -> Float -> Gen -> (b, Gen))
@@ -111,14 +110,56 @@ evalHistograma m n expr = armarHistograma m n (eval expr)
 -- | Mostrar las expresiones, pero evitando algunos paréntesis innecesarios.
 -- En particular queremos evitar paréntesis en sumas y productos anidados.
 
+mostrarDebug :: Expr -> String
+mostrarDebug = recrExpr 
+  (\c -> show c)
+  (\a b -> show a ++ "~" ++ show b)
+  (\s1 s2 p q-> s1 ++ " + " ++ s2 ++ " -- ccc -- " ++ show(constructor p) ++ " --- ccc --- " ++ show(constructor q) ++ " --- ")
+  (\s1 s2 p q -> s1 ++ " - " ++ s2 ++ " -- ccc -- " ++ show(constructor p) ++ " --- ccc --- " ++ show(constructor q) ++ " --- ")
+  (\s1 s2 p q -> s1 ++ " * " ++ s2 ++ " -- ccc -- " ++ show(constructor p) ++ " --- ccc --- " ++ show(constructor q) ++ " --- ")
+  (\s1 s2 p q -> s1 ++ " / " ++ s2 ++ " -- ccc -- " ++ show(constructor p) ++ " --- ccc --- " ++ show(constructor q) ++ " --- ")
+
+
 mostrar :: Expr -> String
-mostrar = foldExpr 
-                  (show)
-                  (\a b -> a ++ "~" ++ b) 
-                  (\izq der-> izq ++ "+" ++ der)
-                  (\izq der-> izq ++ "-" ++ der)
-                  (\izq der-> izq ++ "*" ++ der)
-                  (\izq der-> izq ++ "/" ++ der)
+mostrar = recrExpr
+  (\c -> show c)
+  (\a b -> show a ++ "~" ++ show b)
+  (\s1 s2 p q -> 
+    maybeParen (not (
+      constructor p == CEConst || 
+      constructor p == CESuma || 
+      constructor p == CERango)
+    ) s1 ++ " + " ++ maybeParen (constructor p == CERango) s2)
+  (\s1 s2 p q -> 
+    maybeParen (
+      constructor p == CESuma ||
+      constructor p == CEResta
+    ) s1 ++ " - " ++
+    maybeParen (
+      constructor q == CESuma ||
+      constructor q == CEResta
+    ) s2
+  )
+  (\s1 s2 p q -> 
+    maybeParen (not (
+      constructor p == CEMult || 
+      constructor p == CEConst ||
+      constructor p == CERango
+    )) s1 ++ " * " ++ 
+    maybeParen (not (
+      constructor q == CEMult ||
+      constructor q == CEConst ||
+      constructor q == CERango
+    )) s2)
+  (\s1 s2 p q -> 
+    maybeParen (not (
+      constructor p == CEConst ||
+      constructor p == CERango
+    )) s1 ++ " / " ++ 
+    maybeParen (not (
+      constructor q == CEConst ||
+      constructor q == CERango
+    )) s2)
 
 data ConstructorExpr = CEConst | CERango | CESuma | CEResta | CEMult | CEDiv
   deriving (Show, Eq)
