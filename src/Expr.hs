@@ -114,11 +114,11 @@ evalHistograma m n e g = armarHistograma m n (eval e g) g
 mostrar :: Expr -> String
 mostrar = foldExpr 
                   (show)
-                  (\a b -> show a ++ "~" ++ show b) 
-                  (\izq der-> show izq ++ "+" ++ show der)
-                  (\izq der-> show izq ++ "-" ++ show der)
-                  (\izq der-> show izq ++ "*" ++ show der)
-                  (\izq der-> show izq ++ "/" ++ show der)
+                  (\a b -> a ++ "~" ++ b) 
+                  (\izq der-> izq ++ "+" ++ der)
+                  (\izq der-> izq ++ "-" ++ der)
+                  (\izq der-> izq ++ "*" ++ der)
+                  (\izq der-> izq ++ "/" ++ der)
 
 data ConstructorExpr = CEConst | CERango | CESuma | CEResta | CEMult | CEDiv
   deriving (Show, Eq)
