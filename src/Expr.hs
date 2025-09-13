@@ -54,20 +54,13 @@ foldEval cCte cRan cSum cRes cMul cDiv p g =
   case p of
     Const c -> cCte c
     Rango a b -> cRan a b g
-    Suma p q -> cSum (recConGen) (rec q (snd recConGen))
-      where
-        recConGen = rec p g
-    Resta p q -> cRes (recConGen) (rec q (snd recConGen))
-      where
-        recConGen = rec p g
-    Mult p q -> cMul (recConGen) (rec q (snd recConGen))
-      where
-        recConGen = rec p g
-    Div p q -> cDiv (recConGen) (rec q (snd recConGen))
-      where
-        recConGen = rec p g
+    Suma p q  -> handleExpr cSum p q g
+    Resta p q -> handleExpr cRes p q g
+    Mult p q  -> handleExpr cMul p q g
+    Div p q   -> handleExpr cDiv p q g
   where
-    rec = \expr gen -> foldEval cCte cRan cSum cRes cMul cDiv expr gen
+    rec = foldEval cCte cRan cSum cRes cMul cDiv
+    handleExpr op p q gen = op (rec p gen) (rec q (snd (rec p gen)))
 
 -- The updated eval function
 eval :: Expr -> Gen -> (Float, Gen)
