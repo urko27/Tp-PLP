@@ -26,12 +26,59 @@ data Expr
 recrExpr = error "COMPLETAR EJERCICIO 7"
 
 -- foldExpr :: ... anotar el tipo ...
-foldExpr = error "COMPLETAR EJERCICIO 7"
+foldExpr :: (Float -> b) ->       
+            (Float -> Float -> b) ->  -- constructor Rango
+            (b -> b -> b) ->          -- constructor Suma 
+            (b -> b -> b) ->          -- constructor Resta 
+            (b -> b -> b) ->          -- constructor Mult 
+            (b -> b -> b) ->          -- constructor Div 
+            Expr -> b
+foldExpr cCte cRan cSum cRes cMul cDiv p = case p of
+                                    Const c -> cCte c
+                                    Rango a b -> cRan a b
+                                    Suma p q -> cSum (rec p) (rec q)
+                                    Resta p q -> cRes (rec p) (rec q)
+                                    Mult p q -> cMul (rec p) (rec q)
+                                    Div p q -> cDiv (rec p) (rec q)
+                                where
+                                    rec = foldExpr cCte cRan cSum cRes cMul cDiv
 
--- | Evaluar expresiones dado un generador de números aleatorios
-eval :: Expr -> G Float
-eval = error "COMPLETAR EJERCICIO 8"
+foldEval :: (Float -> (Float, Gen))
+         -> (Float -> Float -> Gen -> (Float, Gen))
+         -> ( (Float, Gen) -> (Float, Gen) -> (Float, Gen))
+         -> ( (Float, Gen) -> (Float, Gen) -> (Float, Gen))
+         -> ( (Float, Gen) -> (Float, Gen) -> (Float, Gen))
+         -> ( (Float, Gen) -> (Float, Gen) -> (Float, Gen))
+         -> Expr -> Gen -> (Float, Gen)
+foldEval cCte cRan cSum cRes cMul cDiv p g =
+  case p of
+    Const c -> cCte c
+    Rango a b -> cRan a b g
+    Suma p q -> cSum (recConGen) (rec q (snd recConGen))
+      where
+        recConGen = rec p g
+    Resta p q -> cRes (recConGen) (rec q (snd recConGen))
+      where
+        recConGen = rec p g
+    Mult p q -> cMul (recConGen) (rec q (snd recConGen))
+      where
+        recConGen = rec p g
+    Div p q -> cDiv (recConGen) (rec q (snd recConGen))
+      where
+        recConGen = rec p g
+  where
+    rec = \expr gen -> foldEval cCte cRan cSum cRes cMul cDiv expr gen
 
+-- The updated eval function
+eval :: Expr -> Gen -> (Float, Gen)
+eval e g = foldEval
+  (\c -> (c, g)) -- Constructor for Const
+  (\a b gen -> dameUno (a, b) gen) -- Constructor for Rango
+  (\(resP, genP) (resQ, genQ) -> (resP + resQ, genQ)) -- Constructor for Suma
+  (\(resP, genP) (resQ, genQ) -> (resP - resQ, genQ)) -- Constructor for Resta
+  (\(resP, genP) (resQ, genQ) -> (resP * resQ, genQ)) -- Constructor for Mult
+  (\(resP, genP) (resQ, genQ) -> (resP / resQ, genQ)) -- Constructor for Div
+  e g
 -- | @armarHistograma m n f g@ arma un histograma con @m@ casilleros
 -- a partir del resultado de tomar @n@ muestras de @f@ usando el generador @g@.
 armarHistograma :: Int -> Int -> G Float -> G Histograma
