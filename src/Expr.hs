@@ -22,10 +22,6 @@ data Expr
   | Div Expr Expr
   deriving (Show, Eq)
 
--- recrExpr :: ... anotar el tipo ...
-recrExpr = error "COMPLETAR EJERCICIO 7"
-
--- foldExpr :: ... anotar el tipo ...
 foldExpr :: (Float -> b) ->       
             (Float -> Float -> b) ->  -- constructor Rango
             (b -> b -> b) ->          -- constructor Suma 
@@ -42,6 +38,26 @@ foldExpr cCte cRan cSum cRes cMul cDiv p = case p of
                                     Div p q -> cDiv (rec p) (rec q)
                                 where
                                     rec = foldExpr cCte cRan cSum cRes cMul cDiv
+                                    
+-- recrExpr :: ... anotar el tipo ...
+recrExpr :: (Float -> Expr -> (b, Gen))
+         -> (Float -> Float -> Gen -> Expr -> (b, Gen))
+         -> ( (b, Gen) -> (b, Gen) -> Expr -> (b, Gen))
+         -> ( (b, Gen) -> (b, Gen) -> Expr -> (b, Gen))
+         -> ( (b, Gen) -> (b, Gen) -> Expr -> (b, Gen))
+         -> ( (b, Gen) -> (b, Gen) -> Expr -> (b, Gen))
+         -> Expr -> Gen -> (b, Gen)
+recrExpr cCte cRan cSum cRes cMul cDiv p' g =
+  case p' of
+    Const c -> cCte c p'
+    Rango a b -> cRan a b g p'
+    Suma p q  -> handleExpr cSum p q g p'
+    Resta p q -> handleExpr cRes p q g p'
+    Mult p q  -> handleExpr cMul p q g p'
+    Div p q   -> handleExpr cDiv p q g p'
+  where
+    rec = recrExpr cCte cRan cSum cRes cMul cDiv
+    handleExpr op p q gen p' = op (rec p gen) (rec q (snd (rec p gen))) p'
 
 foldEval :: (Float -> (b, Gen))
          -> (Float -> Float -> Gen -> (b, Gen))
