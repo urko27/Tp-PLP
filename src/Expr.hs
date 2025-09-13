@@ -72,10 +72,13 @@ eval e g = foldEval
   (\(resP, genP) (resQ, genQ) -> (resP * resQ, genQ)) -- Constructor for Mult
   (\(resP, genP) (resQ, genQ) -> (resP / resQ, genQ)) -- Constructor for Div
   e g
+
 -- | @armarHistograma m n f g@ arma un histograma con @m@ casilleros
 -- a partir del resultado de tomar @n@ muestras de @f@ usando el generador @g@.
 armarHistograma :: Int -> Int -> G Float -> G Histograma
-armarHistograma m n f g = error "COMPLETAR EJERCICIO 9"
+armarHistograma m n f g = (histograma m (rango95 (fst mst)) (fst mst), g)
+  where
+    mst = muestra f n g
 
 -- | @evalHistograma m n e g@ evalúa la expresión @e@ usando el generador @g@ @n@ veces
 -- devuelve un histograma con @m@ casilleros y rango calculado con @rango95@ para abarcar el 95% de confianza de los valores.

@@ -27,8 +27,8 @@ allTests =
       "Ej 6 - Histograma.casilleros" ~: testsCasilleros,
       -- "Ej 7 - Expr.recrExpr" ~: testsRecr,
       -- "Ej 7 - Expr.foldExpr" ~: testsFold,
-      "Ej 8 - Expr.eval" ~: testsEval
-      -- "Ej 9 - Expr.armarHistograma" ~: testsArmarHistograma,
+      "Ej 8 - Expr.eval" ~: testsEval,
+      "Ej 9 - Expr.armarHistograma" ~: testsArmarHistograma
       -- "Ej 10 - Expr.evalHistograma" ~: testsEvalHistograma,
       -- "Ej 11 - Expr.mostrar" ~: testsMostrar,
       -- "Expr.Parser.parse" ~: testsParse,
@@ -178,7 +178,20 @@ testsEval =
 testsArmarHistograma :: Test
 testsArmarHistograma =
   test
-    [completar]
+    -- muestra (dameUno (1, 5)) 4 (fromList [1, 2, 3, 4])
+    -- valores: [4.020408,5.0408163,6.0612245,7.0816326]
+    -- rango95 (fst (muestra (dameUno (1, 5)) 4 (fromList [1, 2, 3])))
+    -- rango: (3.3149521,7.7870884)
+    [casilleros (fst (
+      armarHistograma 3 4 (dameUno (1, 5)) (fromList ([1, 2, 3, 4]))
+    )) ~?= [
+        Casillero infinitoNegativo 3.3149521 0 0,
+        Casillero 3.3149521 4.805664 1 25.0,
+        Casillero 4.805664 6.296376 2 50.0,
+        Casillero 6.296376 7.7870884 1 25.0,
+        Casillero 7.7870884 infinitoPositivo 0 0.0
+      ]
+    ]
 
 testsEvalHistograma :: Test
 testsEvalHistograma =
