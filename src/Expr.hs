@@ -83,7 +83,7 @@ armarHistograma m n f g = (histograma m (rango95 (fst mst)) (fst mst), g)
 -- devuelve un histograma con @m@ casilleros y rango calculado con @rango95@ para abarcar el 95% de confianza de los valores.
 -- @n@ debe ser mayor que 0.
 evalHistograma :: Int -> Int -> Expr -> G Histograma
-evalHistograma m n expr = error "COMPLETAR EJERCICIO 10"
+evalHistograma m n e g = armarHistograma m n (eval e g) g
 
 -- Podemos armar histogramas que muestren las n evaluaciones en m casilleros.
 -- >>> evalHistograma 11 10 (Suma (Rango 1 5) (Rango 100 105)) (genNormalConSemilla 0)
@@ -94,8 +94,15 @@ evalHistograma m n expr = error "COMPLETAR EJERCICIO 10"
 
 -- | Mostrar las expresiones, pero evitando algunos paréntesis innecesarios.
 -- En particular queremos evitar paréntesis en sumas y productos anidados.
+
 mostrar :: Expr -> String
-mostrar = error "COMPLETAR EJERCICIO 11"
+mostrar = foldExpr 
+                  (show)
+                  (\a b -> show a ++ "~" ++ show b) 
+                  (\izq der-> show izq ++ "+" ++ show der)
+                  (\izq der-> show izq ++ "-" ++ show der)
+                  (\izq der-> show izq ++ "*" ++ show der)
+                  (\izq der-> show izq ++ "/" ++ show der)
 
 data ConstructorExpr = CEConst | CERango | CESuma | CEResta | CEMult | CEDiv
   deriving (Show, Eq)
