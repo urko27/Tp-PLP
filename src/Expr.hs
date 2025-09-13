@@ -43,13 +43,13 @@ foldExpr cCte cRan cSum cRes cMul cDiv p = case p of
                                 where
                                     rec = foldExpr cCte cRan cSum cRes cMul cDiv
 
-foldEval :: (Float -> (Float, Gen))
-         -> (Float -> Float -> Gen -> (Float, Gen))
-         -> ( (Float, Gen) -> (Float, Gen) -> (Float, Gen))
-         -> ( (Float, Gen) -> (Float, Gen) -> (Float, Gen))
-         -> ( (Float, Gen) -> (Float, Gen) -> (Float, Gen))
-         -> ( (Float, Gen) -> (Float, Gen) -> (Float, Gen))
-         -> Expr -> Gen -> (Float, Gen)
+foldEval :: (Float -> (b, Gen))
+         -> (Float -> Float -> Gen -> (b, Gen))
+         -> ( (b, Gen) -> (b, Gen) -> (b, Gen))
+         -> ( (b, Gen) -> (b, Gen) -> (b, Gen))
+         -> ( (b, Gen) -> (b, Gen) -> (b, Gen))
+         -> ( (b, Gen) -> (b, Gen) -> (b, Gen))
+         -> Expr -> Gen -> (b, Gen)
 foldEval cCte cRan cSum cRes cMul cDiv p g =
   case p of
     Const c -> cCte c
@@ -62,7 +62,6 @@ foldEval cCte cRan cSum cRes cMul cDiv p g =
     rec = foldEval cCte cRan cSum cRes cMul cDiv
     handleExpr op p q gen = op (rec p gen) (rec q (snd (rec p gen)))
 
--- The updated eval function
 eval :: Expr -> Gen -> (Float, Gen)
 eval e g = foldEval
   (\c -> (c, g)) -- Constructor for Const
