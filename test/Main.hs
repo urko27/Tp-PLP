@@ -28,8 +28,8 @@ allTests =
       -- "Ej 7 - Expr.recrExpr" ~: testsRecr,
       -- "Ej 7 - Expr.foldExpr" ~: testsFold,
       "Ej 8 - Expr.eval" ~: testsEval,
-      "Ej 9 - Expr.armarHistograma" ~: testsArmarHistograma
-      -- "Ej 10 - Expr.evalHistograma" ~: testsEvalHistograma,
+      "Ej 9 - Expr.armarHistograma" ~: testsArmarHistograma,
+      "Ej 10 - Expr.evalHistograma" ~: testsEvalHistograma
       -- "Ej 11 - Expr.mostrar" ~: testsMostrar,
       -- "Expr.Parser.parse" ~: testsParse,
       -- "App.mostrarFloat" ~: testsMostrarFloat,
@@ -196,7 +196,19 @@ testsArmarHistograma =
 testsEvalHistograma :: Test
 testsEvalHistograma =
   test
-    [completar]
+    [
+      -- el primer rango evalua a 2.7980492 y el segundo a 3.1250308
+      -- por lo tanto va a estar en el casillero que incluya a 5.92308
+      casilleros(fst(evalHistograma 3 1 (Suma (Rango 1 5) (Rango 1 5)) (genNormalConSemilla 0))) 
+      ~?=
+        [
+          Casillero infinitoNegativo 4.92308 0 0.0,
+          Casillero 4.92308 5.5897465 0 0.0,
+          Casillero 5.5897465 6.2564135 1 100.0,
+          Casillero 6.2564135 6.92308 0 0.0,
+          Casillero 6.92308 infinitoPositivo 0 0.0
+        ]
+    ]
 
 testsParse :: Test
 testsParse =
