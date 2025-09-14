@@ -25,15 +25,15 @@ allTests =
       "Ej 4 - Histograma.agregar" ~: testsAgregar,
       "Ej 5 - Histograma.histograma" ~: testsHistograma,
       "Ej 6 - Histograma.casilleros" ~: testsCasilleros,
-      -- "Ej 7 - Expr.recrExpr" ~: testsRecr,
-      -- "Ej 7 - Expr.foldExpr" ~: testsFold,
+      "Ej 7 - Expr.recrExpr" ~: testsRecr,
+      "Ej 7 - Expr.foldExpr" ~: testsFold,
       "Ej 8 - Expr.eval" ~: testsEval,
       "Ej 9 - Expr.armarHistograma" ~: testsArmarHistograma,
       "Ej 10 - Expr.evalHistograma" ~: testsEvalHistograma,
-      "Ej 11 - Expr.mostrar" ~: testsMostrar
-      -- "Expr.Parser.parse" ~: testsParse,
-      -- "App.mostrarFloat" ~: testsMostrarFloat,
-      -- "App.mostrarHistograma" ~: testsMostrarHistograma
+      "Ej 11 - Expr.mostrar" ~: testsMostrar,
+      "Expr.Parser.parse" ~: testsParse,
+      "App.mostrarFloat" ~: testsMostrarFloat,
+      "App.mostrarHistograma" ~: testsMostrarHistograma
     ]
 
 testsAlinearDerecha :: Test
@@ -41,7 +41,8 @@ testsAlinearDerecha =
   test
     [ alinearDerecha 8 "hola" ~?= "    hola",
       alinearDerecha 10 "incierticalc" ~?= "incierticalc",
-      alinearDerecha 5 "" ~?= "     "
+      alinearDerecha 5 "" ~?= "     ",
+      alinearDerecha 2 "quedaEntero" ~?= "quedaEntero"
     ]
 
 testsActualizarElem :: Test
@@ -119,6 +120,12 @@ testsHistograma =
         Casillero 3.0 4.0 0 0,
         Casillero 4.0 5.0 0 0,
         Casillero 5.0 infinitoPositivo 2 40.0
+      ],
+      casilleros (histograma 2 (-5.0, 8.0) [1.0, 3.0, 3.0, 3.0, 3.0]) ~?= [
+        Casillero infinitoNegativo (-5.0) 0 0,
+        Casillero (-5.0) 1.5 1 20.0,
+        Casillero 1.5 8.0 4 80.0,
+        Casillero 8.0 infinitoPositivo 0 0
       ]
     ]
 
@@ -149,17 +156,52 @@ testsCasilleros =
             ]
     ]
 
--- testsRecr :: Test
--- testsRecr =
---   test
---     [ completar
---     ]
+testsRecr :: Test
+testsRecr =
+  test
+    [
+      recrExpr                      -- Simplificamos la Expresión cuando hay operaciones triviales
+        (\c -> Const c)             -- (sumar 0, multiplicar y dividir por 0, rangos que son 1 solo numero, etc)
+        (\a b -> if a == b then (Const a) else (Rango a b))
+        (\r1 r2 p q -> case (r1, r2) of
+                         ((Const 0.0), _) -> r2
+                         (_, (Const 0.0)) -> r1
+                         _                -> Suma r1 r2)
+        (\r1 r2 p q -> case (r1, r2) of
+                         (_, (Const 0.0)) -> r1
+                         _                -> Resta r1 r2)
+        (\r1 r2 p q -> case (r1, r2) of
+                         ((Const 1.0), _) -> r2
+                         (_, (Const 1.0)) -> r1
+                         _                -> Mult r1 r2)
+        (\r1 r2 p q -> case (r1, r2) of
+                         (_, (Const 1.0)) -> r1
+                         _                -> Div r1 r2)
+        (Div (Suma (Const 0.0) (Rango 1.0 1.0)) (Const 1.0)) ~?= (Const 1.0)
+    ]
 
--- testsFold :: Test
--- testsFold =
---   test
---     [ completar
---     ]
+testsFold :: Test
+testsFold =
+  test
+    [
+      fst (foldExpr                   -- Sumamos 1 a los valores numéricos de la expresión
+        (\c g -> (Const (c+1), g))
+        (\a b g -> (Rango (a+1) (b+1), g))
+        (\(resP, genP) (resQ, genQ) -> (Suma resP resQ, genQ))
+        (\(resP, genP) (resQ, genQ) -> (Resta resP resQ, genQ))
+        (\(resP, genP) (resQ, genQ) -> (Mult resP resQ, genQ))
+        (\(resP, genP) (resQ, genQ) -> (Div resP resQ, genQ))
+        (Suma (Const 2.0) (Rango 1 5)) genFijo) ~?= Suma (Const 3.0) (Rango 2 6),
+        fst (foldExpr                 -- "Invertimos" las operaciones, suma <-> resta y mult <-> div
+        (\c g -> (Const c, g))
+        (\a b g -> (Rango a b, g))
+        (\(resP, genP) (resQ, genQ) -> (Resta resP resQ, genQ))
+        (\(resP, genP) (resQ, genQ) -> (Suma resP resQ, genQ))
+        (\(resP, genP) (resQ, genQ) -> (Div resP resQ, genQ))
+        (\(resP, genP) (resQ, genQ) -> (Mult resP resQ, genQ))
+        (Div (Resta (Suma (Const 2.0) (Rango 1 5)) (Mult (Const 1.0) (Rango 4 8))) (Const 2.0)) genFijo) ~?=
+          (Mult (Suma (Resta (Const 2.0) (Rango 1 5)) (Div (Const 1.0) (Rango 4 8))) (Const 2.0))
+    ]
 
 testsEval :: Test
 testsEval =

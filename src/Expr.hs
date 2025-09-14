@@ -23,30 +23,12 @@ data Expr
   | Div Expr Expr
   deriving (Show, Eq)
 
-foldExpr :: (Float -> b) ->       
-            (Float -> Float -> b) ->  -- constructor Rango
-            (b -> b -> b) ->          -- constructor Suma 
-            (b -> b -> b) ->          -- constructor Resta 
-            (b -> b -> b) ->          -- constructor Mult 
-            (b -> b -> b) ->          -- constructor Div 
-            Expr -> b
-foldExpr cCte cRan cSum cRes cMul cDiv p = case p of
-    Const c -> cCte c
-    Rango a b -> cRan a b
-    Suma p q -> cSum (rec p) (rec q)
-    Resta p q -> cRes (rec p) (rec q)
-    Mult p q -> cMul (rec p) (rec q)
-    Div p q -> cDiv (rec p) (rec q)
-  where
-    rec = foldExpr cCte cRan cSum cRes cMul cDiv
-                                    
--- recrExpr :: ... anotar el tipo ...
-recrExpr :: (Float -> b) ->       
-            (Float -> Float -> b) ->  -- constructor Rango
-            (b -> b -> Expr -> Expr -> b) ->          -- constructor Suma 
-            (b -> b -> Expr -> Expr -> b) ->          -- constructor Resta 
-            (b -> b -> Expr -> Expr -> b) ->          -- constructor Mult 
-            (b -> b -> Expr -> Expr -> b) ->          -- constructor Div 
+recrExpr :: (Float -> b) ->                           -- constructor Constante
+            (Float -> Float -> b) ->                  -- constructor Rango
+            (b -> b -> Expr -> Expr -> b) ->          -- constructor Suma
+            (b -> b -> Expr -> Expr -> b) ->          -- constructor Resta
+            (b -> b -> Expr -> Expr -> b) ->          -- constructor Mult
+            (b -> b -> Expr -> Expr -> b) ->          -- constructor Div
             Expr -> b
 recrExpr cCte cRan cSum cRes cMul cDiv p' = case p' of
     Const c -> cCte c
@@ -58,33 +40,33 @@ recrExpr cCte cRan cSum cRes cMul cDiv p' = case p' of
   where
     rec = recrExpr cCte cRan cSum cRes cMul cDiv
 
-foldEval :: (Float -> (b, Gen))
-         -> (Float -> Float -> Gen -> (b, Gen))
-         -> ( (b, Gen) -> (b, Gen) -> (b, Gen))
-         -> ( (b, Gen) -> (b, Gen) -> (b, Gen))
-         -> ( (b, Gen) -> (b, Gen) -> (b, Gen))
-         -> ( (b, Gen) -> (b, Gen) -> (b, Gen))
-         -> Expr -> Gen -> (b, Gen)
-foldEval cCte cRan cSum cRes cMul cDiv p g =
+foldExpr :: (Float -> G b)                      -- constructor Constante
+         -> (Float -> Float -> G b)             -- constructor Rango
+         -> ( (b, Gen) -> (b, Gen) -> (b, Gen)) -- constructor Suma
+         -> ( (b, Gen) -> (b, Gen) -> (b, Gen)) -- constructor Resta
+         -> ( (b, Gen) -> (b, Gen) -> (b, Gen)) -- constructor Mult
+         -> ( (b, Gen) -> (b, Gen) -> (b, Gen)) -- constructor Div
+         -> Expr -> G b
+foldExpr cCte cRan cSum cRes cMul cDiv p g =
   case p of
-    Const c -> cCte c
+    Const c -> cCte c g
     Rango a b -> cRan a b g
     Suma p q  -> handleExpr cSum p q g
     Resta p q -> handleExpr cRes p q g
     Mult p q  -> handleExpr cMul p q g
     Div p q   -> handleExpr cDiv p q g
   where
-    rec = foldEval cCte cRan cSum cRes cMul cDiv
+    rec = foldExpr cCte cRan cSum cRes cMul cDiv
     handleExpr op p q gen = op (rec p gen) (rec q (snd (rec p gen)))
 
-eval :: Expr -> Gen -> (Float, Gen)
-eval e g = foldEval
-  (\c -> (c, g)) -- Constructor for Const
-  (\a b gen -> dameUno (a, b) gen) -- Constructor for Rango
-  (\(resP, genP) (resQ, genQ) -> (resP + resQ, genQ)) -- Constructor for Suma
-  (\(resP, genP) (resQ, genQ) -> (resP - resQ, genQ)) -- Constructor for Resta
-  (\(resP, genP) (resQ, genQ) -> (resP * resQ, genQ)) -- Constructor for Mult
-  (\(resP, genP) (resQ, genQ) -> (resP / resQ, genQ)) -- Constructor for Div
+eval :: Expr -> G Float
+eval e g = foldExpr
+  (\c gen -> (c, gen))                                -- Constructor Constante
+  (\a b gen -> dameUno (a, b) gen)                    -- Constructor Rango
+  (\(resP, genP) (resQ, genQ) -> (resP + resQ, genQ)) -- Constructor Suma
+  (\(resP, genP) (resQ, genQ) -> (resP - resQ, genQ)) -- Constructor Resta
+  (\(resP, genP) (resQ, genQ) -> (resP * resQ, genQ)) -- Constructor Mult
+  (\(resP, genP) (resQ, genQ) -> (resP / resQ, genQ)) -- Constructor Div
   e g
 
 -- | @armarHistograma m n f g@ arma un histograma con @m@ casilleros
