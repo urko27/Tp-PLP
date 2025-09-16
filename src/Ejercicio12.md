@@ -81,12 +81,31 @@ $$
 $$
 \begin{align*}
 \quad\text{cantLit} \ (\text{Suma} \ e_1 \ e_2) &= S\ (\text{cantOp} \ (\text{Suma} \ e_1 \ e_2)) \\
-\quad\text{cantLit} \ (\text{Suma} \ e_1 \ e_2) &= S\ (\text{suma} \ (\text{cantOp}\ e_1) \ (\text{cantOp}\ e_2)) & \text{\{O3\}}\\
-\quad\text{cantLit} \ (\text{Suma} \ e_1 \ e_2) &= \text{suma}\ (S\ (\text{cantOp}\ e_1)) \ (\text{cantOp}\ e_2) & \text{\{S2\}}\\
-\quad\text{cantLit} \ (\text{Suma} \ e_1 \ e_2) &= \text{suma}\ (\text{cantLit}\ e_1) \ (\text{cantOp}\ e_2) & \text{\{HP\}}\\
-\quad\text{suma} \ (\text{cantLit} \ e_1)\ (\text{cantLit}\ e_2) &= \text{suma}\ (\text{cantLit}\ e_1) \ (\text{cantOp}\ e_2) & \text{\{L3\}}\\
-\quad\text{suma} \ (S\ (\text{cantOp} \ e_1))\ (S\ (\text{cantOp}\ e_2)) &= \text{suma}\ (S\ (\text{cantOp}\ e_1))\ (\text{cantOp}\ e_2) & \text{\{HP\}}\\
-\quad S\ (\text{suma} \ (\text{cantOp} \ e_1)\ (S\ (\text{cantOp}\ e_2))) &= S\ (\text{suma}\ (\text{cantOp}\ e_1))\ (\text{cantOp}\ e_2) & \text{\{S2\}}\\
-
+\quad\text{suma} \ (\text{cantLit} \ e_1)\ (\text{cantLit}\ e_2) &= S\ (\text{cantOp} \ (\text{Suma} \ e_1 \ e_2)) & \text{\{L3\}}\\
+\quad\text{suma} \ (S\ (\text{cantOp} \ e_1))\ (S\ (\text{cantOp}\ e_2)) &= S\ (\text{cantOp} \ (\text{Suma} \ e_1 \ e_2)) & \text{\{HI\}}\\
+\quad S\ (\text{suma} \ (\text{cantOp} \ e_1)\ (S\ (\text{cantOp}\ e_2))) &= S\ (\text{cantOp} \ (\text{Suma} \ e_1 \ e_2)) & \text{\{S2\}}\\
+\quad S\ (\text{suma} \ (S\ (\text{cantOp}\ e_2))\ (\text{cantOp} \ e_1)) &= S\ (\text{cantOp} \ (\text{Suma} \ e_1 \ e_2)) & \text{\{CONMUT\}}\\
+\quad S\ (S\ (\text{suma} \ (\text{cantOp}\ e_2)\ (\text{cantOp} \ e_1))) &= S\ (\text{cantOp} \ (\text{Suma} \ e_1 \ e_2)) & \text{\{S2\}}\\
+\quad S\ (S\ (\text{suma} \ (\text{cantOp} \ e_1)\ (\text{cantOp}\ e_2))) &= S\ (\text{cantOp} \ (\text{Suma} \ e_1 \ e_2)) & \text{\{CONMUT\}}\\
+\quad S\ (S\ (\text{suma} \ (\text{cantOp} \ e_1)\ (\text{cantOp}\ e_2))) &= S\ (S\ (\text{suma} \ (\text{cantOp} \ e_1) \ (\text{cantOp} \ e_2))) & \text{\{O3\}}\\
 \end{align*}
 $$
+
+El caso inductivo $P\ (\text{Suma}\ e_1\ e_2 )$ queda verificado.
+
+<p align="center"> <span style="font-size: 20px"> ................................................................................................ </spans></p>
+<p align="center"> <span style="font-size: 20px"> Por consigna podemos dejar la demostración hasta este punto porque los demás casos son análogos. </span></p>
+<p align="center"> <span style="font-size: 20px"> ................................................................................................ </spans></p>
+<br></br>
+
+---
+
+<h2 align="center"> Conclusión </h2>
+
+<p align="center"> <span style="font-size: 15px"> Como los casos base y los casos inductivos quedan verificados, entonces por principio de inducción estructural en estructura Expr podemos concluir que </span> </p>
+
+$$
+\forall \text{e} \ : \ : \text{Expr}. \ P\ (\text{e}) \ \equiv \ \text{cantLit} \ \text{e} \ = \ \text{S} \ (\text{cantOp} \ \text{e})
+$$
+
+<p align="center"> <span style="font-size: 15px"> Es verdadero. </span> </p>
