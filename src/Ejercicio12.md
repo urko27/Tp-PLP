@@ -1,10 +1,16 @@
 # a)
+
+Para demostrar la propiedad del enunciado, realizaremos una demostración por inducción estructural en el tipo de datos abstracto Expr. 
+
+Dicha demostración, se basará en el predicado unario P(e) que se describe a continuación:
+
 $$
-P(\text{e}) \equiv \text{cantLit} \ \text{e} \ = \ \text{S} \ (\text{cantOp} \ \text{e})
+ ∀ e :: Expr.  P(\text{e}): \text{cantLit} \ \text{e} \ = \ \text{S} \ (\text{cantOp} \ \text{e})
 $$
+
 # b)
 ```
-Para probar la propiedad P(e) ∀ e :: Expr basta con verificar por inducción estructural que P(e) es verdadera en los siguientes casos:
+Para probar la propiedad P(e) basta con verificar por inducción estructural que P(e) es verdadera en los siguientes casos:
 
 ∀ a :: Float.  ∀ b :: Float.
 Casos base:
@@ -13,19 +19,23 @@ Casos base:
 
 ∀ e1 :: Expr. ∀ e2 :: Expr.
 Caso inductivo:
-    1. Si e = Suma e1 e2 , vale P(Suma e1 e2) segun
-        Hipótesis inductiva:  P(e1) ∧ P(e2) => P(Suma e1 e2)
+    1. Si e = Suma e1 e2 , y asumimos que vale tanto P(e1) como P(e2), queremos ver que vale tambien P(Suma e1 e2) según
+        Hipótesis inductiva:  P(e1) ∧ P(e2) 
+        Tésis inductiva: P(Suma e1 e2)
 
-    2. Si e = Resta e1 e2 , vale P(Resta e1 e2) segun
-        Hipótesis inductiva:  P(e1) ∧ P(e2) => P(Resta e1 e2)
+    2. Si e = Resta e1 e2 , y asumimos que vale tanto P(e1) como P(e2), queremos ver que vale tambien P(Resta e1 e2) según
+        Hipótesis inductiva:  P(e1) ∧ P(e2) 
+        Tésis inductiva: P(Resta e1 e2)
 
-    3. Si e = Mult e1 e2 , vale P(Mult e1 e2) segun
-        Hipótesis inductiva:  P(e1) ∧ P(e2) => P(Mult e1 e2)
+    3. Si e = Mult e1 e2 , y asumimos que vale tanto P(e1) como P(e2), queremos ver que vale tambien P(Mult e1 e2) según
+        Hipótesis inductiva:  P(e1) ∧ P(e2) 
+        Tésis inductiva: P(Mult e1 e2)
 
-    4. Si e = Div e1 e2 , vale P(Div e1 e2) segun
-        Hipótesis inductiva:  P(e1) ∧ P(e2) => P(Div e1 e2)
+    4. Si e = Div e1 e2 , y asumimos que vale tanto P(e1) como P(e2), queremos ver que vale tambien P(Div e1 e2) según
+        Hipótesis inductiva:  P(e1) ∧ P(e2) 
+        Tésis inductiva: P(Div e1 e2)
 
-Verificados los casos base y los casos inductivos entonces se puede concluir que por principio de inducción estructural que ∀ e :: Expr. P(e)
+Una vez verificados tanto los casos base como los casos inductivos, podremos entonces concluir que, por principio de inducción estructural, vale que ∀ e :: Expr. P(e)
 ```
 # c)
 
@@ -75,7 +85,7 @@ $$
 \end{align*}
 $$
 $$
-\text{Sean } \\ . \\ e\ =\ \text{Suma } e_1 \ e_2 \\ .\\ HI \equiv P\ (e_1) \land P(e_2) \\ .\\ \text{Queremos ver que } P\ (e_1) \land P(e_2) \implies P\ (e)
+\text{Sean } \\ . \\ e\ =\ \text{Suma } e_1 \ e_2 \\ .\\ HI \equiv P\ (e_1) \land P(e_2) \\ .\\ \text{Queremos ver que vale } P\ (e)
 $$
 #### Dem
 $$
@@ -105,7 +115,7 @@ El caso inductivo $P\ (\text{Suma}\ e_1\ e_2 )$ queda verificado.
 <p align="center"> <span style="font-size: 15px"> Como los casos base y los casos inductivos quedan verificados, entonces por principio de inducción estructural en estructura Expr podemos concluir que </span> </p>
 
 $$
-\forall \text{e} \ : \ : \text{Expr}. \ P\ (\text{e}) \ \equiv \ \text{cantLit} \ \text{e} \ = \ \text{S} \ (\text{cantOp} \ \text{e})
+\forall \text{e} \ : \ : \text{Expr}. \  \text{cantLit} \ \text{e} \ = \ \text{S} \ (\text{cantOp} \ \text{e})
 $$
 
 <p align="center"> <span style="font-size: 15px"> Es verdadero. </span> </p>
