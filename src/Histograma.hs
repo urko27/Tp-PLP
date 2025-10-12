@@ -33,7 +33,7 @@ data Histograma = Histograma Float Float [Int]
 -- valores en el rango y 2 casilleros adicionales para los valores fuera del rango.
 -- Require que @l < u@ y @n >= 1@.
 vacio :: Int -> (Float, Float) -> Histograma
-vacio tamaño (inferior, superior) = Histograma (inferior) ((superior - inferior)/fromIntegral tamaño) ([0 | _ <- [1..tamaño+2]])
+vacio tamaño (inferior, superior) = Histograma inferior ((superior - inferior)/fromIntegral tamaño) (replicate (tamaño+2) 0)
 
 -- | Agrega un valor al histograma.
 agregar :: Float -> Histograma -> Histograma
@@ -69,24 +69,27 @@ casCantidad (Casillero _ _ c _) = c
 casPorcentaje :: Casillero -> Float
 casPorcentaje (Casillero _ _ _ p) = p
 
-limitesIntermedios :: Float -> Float -> Int -> [Float]
-limitesIntermedios primerLimite longitudIntervalo tamaño = [ fromIntegral indice * longitudIntervalo + primerLimite | indice <- [0..tamaño] ]
 
-limitesInferiores :: Histograma -> [Float]
-limitesInferiores (Histograma primerLimite longitudIntervalo _cantidades) = infinitoNegativo : limitesIntermedios primerLimite longitudIntervalo (length _cantidades -2)
 
-limitesSuperiores :: Histograma -> [Float]
-limitesSuperiores (Histograma primerLimite longitudIntervalo _cantidades) = limitesIntermedios primerLimite longitudIntervalo (length _cantidades -2) ++ [infinitoPositivo]
+-- | Dado un histograma, devuelve la lista de casilleros con sus límites, cantidad y porcentaje.
+casilleros :: Histograma -> [Casillero]
+casilleros hist = zipWith4 Casillero (limitesInferiores hist) (limitesSuperiores hist) (cantidades hist) (porcentajes hist)
+  where
+    limitesIntermedios :: Float -> Float -> Int -> [Float]
+    limitesIntermedios primerLimite longitudIntervalo tamaño = [ fromIntegral indice * longitudIntervalo + primerLimite | indice <- [0..tamaño] ]
+
+    limitesInferiores :: Histograma -> [Float]
+    limitesInferiores (Histograma primerLimite longitudIntervalo _cantidades) = infinitoNegativo : limitesIntermedios primerLimite longitudIntervalo (length _cantidades -2)
+
+    limitesSuperiores :: Histograma -> [Float]
+    limitesSuperiores (Histograma primerLimite longitudIntervalo _cantidades) = limitesIntermedios primerLimite longitudIntervalo (length _cantidades -2) ++ [infinitoPositivo]
 
 cantidades :: Histograma -> [Int]
 cantidades (Histograma _ _ _cantidades) = _cantidades
 
 porcentajes :: Histograma -> [Float]
 porcentajes (Histograma _ _ _cantidades) = if sumaCantidades == 0
-                                            then [ 0 | _ <- [0..length(_cantidades)-1] ]
+                                            then [ 0 | _ <- [0..length _cantidades -1] ]
                                             else map (\cantidad -> cantidad * 100.0 / fromIntegral(sumaCantidades)) (map fromIntegral _cantidades)
                                             where sumaCantidades = sum _cantidades
-
--- | Dado un histograma, devuelve la lista de casilleros con sus límites, cantidad y porcentaje.
-casilleros :: Histograma -> [Casillero]
-casilleros hist = zipWith4 Casillero (limitesInferiores hist) (limitesSuperiores hist) (cantidades hist) (porcentajes hist)
+                                            

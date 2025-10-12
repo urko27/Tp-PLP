@@ -3,14 +3,14 @@ module Util where
 -- | @alinearDerecha n s@ agrega espacios a la izquierda de @s@ hasta que su longitud sea @n@.
 -- Si @s@ ya tiene longitud @>= n@, devuelve @s@.
 alinearDerecha :: Int -> String -> String
-alinearDerecha n s = [' ' | _ <- [1..(n - length s)]] ++ s
+alinearDerecha n s = replicate (n - length s) ' ' ++ s
 
 -- | Dado un índice y una función, actualiza el elemento en la posición del índice
 -- aplicando la función al valor actual. Si el índice está fuera de los límites
 -- de la lista, devuelve la lista sin cambios.
 -- El primer elemento de la lista es el índice 0.
 actualizarElem :: Int -> (a -> a) -> [a] -> [a]
-actualizarElem n f = foldl (\acc x -> if length acc == n then acc ++ [(f x)] else acc ++ [x]) []
+actualizarElem n f = foldl (\acc x -> acc ++ if length acc == n then[f x] else[x]) []
 
 -- | infinito positivo (Haskell no tiene literal para +infinito)
 infinitoPositivo :: Float
