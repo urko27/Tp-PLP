@@ -5,8 +5,7 @@ module Expr
     eval,
     armarHistograma,
     evalHistograma,
-    mostrar,
-    mostrarDebug
+    mostrar
   )
 where
 
@@ -94,16 +93,6 @@ evalHistograma m n expr = armarHistograma m n (eval expr)
 
 -- | Mostrar las expresiones, pero evitando algunos paréntesis innecesarios.
 -- En particular queremos evitar paréntesis en sumas y productos anidados.
-
-mostrarDebug :: Expr -> String
-mostrarDebug = recrExpr 
-  (\c -> show c)
-  (\a b -> show a ++ "~" ++ show b)
-  (\s1 s2 p q-> s1 ++ " + " ++ s2 ++ " -- ccc -- " ++ show(constructor p) ++ " --- ccc --- " ++ show(constructor q) ++ " --- ")
-  (\s1 s2 p q -> s1 ++ " - " ++ s2 ++ " -- ccc -- " ++ show(constructor p) ++ " --- ccc --- " ++ show(constructor q) ++ " --- ")
-  (\s1 s2 p q -> s1 ++ " * " ++ s2 ++ " -- ccc -- " ++ show(constructor p) ++ " --- ccc --- " ++ show(constructor q) ++ " --- ")
-  (\s1 s2 p q -> s1 ++ " / " ++ s2 ++ " -- ccc -- " ++ show(constructor p) ++ " --- ccc --- " ++ show(constructor q) ++ " --- ")
-
 
 mostrar :: Expr -> String
 mostrar = recrExpr
