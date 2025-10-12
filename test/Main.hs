@@ -221,18 +221,15 @@ testsEval =
 testsArmarHistograma :: Test
 testsArmarHistograma =
   test
-    -- muestra (dameUno (1, 5)) 4 (fromList [1, 2, 3, 4])
-    -- valores: [4.020408,5.0408163,6.0612245,7.0816326]
-    -- rango95 (fst (muestra (dameUno (1, 5)) 4 (fromList [1, 2, 3])))
-    -- rango: (3.3149521,7.7870884)
+    -- muestra de numeros: [2.7980492,3.1250308,5.464013,3.526857]
     [casilleros (fst (
-      armarHistograma 3 4 (dameUno (1, 5)) (fromList ([1, 2, 3, 4]))
+      armarHistograma 3 4 (dameUno (1, 5)) (genNormalConSemilla(0))
     )) ~?= [
-        Casillero infinitoNegativo 3.3149521 0 0,
-        Casillero 3.3149521 4.805664 1 25.0,
-        Casillero 4.805664 6.296376 2 50.0,
-        Casillero 6.296376 7.7870884 1 25.0,
-        Casillero 7.7870884 infinitoPositivo 0 0.0
+        Casillero infinitoNegativo 1.7004368 0 0,
+        Casillero 1.7004368 3.0524707 1 25.0,
+        Casillero 3.0524707 4.404505 2 50.0,
+        Casillero 4.404505 5.7565384 1 25.0,
+        Casillero 5.7565384 infinitoPositivo 0 0.0
       ]
     ]
 

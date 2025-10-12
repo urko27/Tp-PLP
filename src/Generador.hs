@@ -62,8 +62,7 @@ module Generador
     genNormalConSemilla,
     genNormal,
     conGenNormal,
-    rango95,
-    fromList
+    rango95
   )
 where
 
