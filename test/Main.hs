@@ -222,15 +222,21 @@ testsArmarHistograma :: Test
 testsArmarHistograma =
   test
     -- muestra de numeros: [2.7980492,3.1250308,5.464013,3.526857]
-    [casilleros (fst (
-      armarHistograma 3 4 (dameUno (1, 5)) (genNormalConSemilla(0))
-    )) ~?= [
-        Casillero infinitoNegativo 1.7004368 0 0,
-        Casillero 1.7004368 3.0524707 1 25.0,
-        Casillero 3.0524707 4.404505 2 50.0,
-        Casillero 4.404505 5.7565384 1 25.0,
-        Casillero 5.7565384 infinitoPositivo 0 0.0
-      ]
+    [
+      casilleros (fst (
+        armarHistograma 3 4 (dameUno (1, 5)) (genNormalConSemilla(0))
+      )) ~?= [
+          Casillero infinitoNegativo 1.7004368 0 0,
+          Casillero 1.7004368 3.0524707 1 25.0,
+          Casillero 3.0524707 4.404505 2 50.0,
+          Casillero 4.404505 5.7565384 1 25.0,
+          Casillero 5.7565384 infinitoPositivo 0 0.0
+        ],
+      fst (
+        dameUno 
+          (1, 5) 
+          (snd (armarHistograma 3 3 (dameUno (1, 5)) (genNormalConSemilla(0))))
+        ) ~?= 3.526857
     ]
 
 testsEvalHistograma :: Test
