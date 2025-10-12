@@ -39,12 +39,12 @@ recrExpr cCte cRan cSum cRes cMul cDiv p' = case p' of
   where
     rec = recrExpr cCte cRan cSum cRes cMul cDiv
 
-foldExpr :: (Float -> b)                      -- constructor Constante
-         -> (Float -> Float -> b)             -- constructor Rango
-         -> (b -> b -> b) -- constructor Suma
-         -> (b ->b -> b) -- constructor Resta
-         -> (b ->b -> b) -- constructor Mult
-         -> (b ->b -> b) -- constructor Div
+foldExpr :: (Float -> b)          -- constructor Constante
+         -> (Float -> Float -> b) -- constructor Rango
+         -> (b -> b -> b)         -- constructor Suma
+         -> (b -> b -> b)         -- constructor Resta
+         -> (b -> b -> b)         -- constructor Mult
+         -> (b -> b -> b)         -- constructor Div
          -> Expr -> b
 foldExpr cCte cRan cSum cRes cMul cDiv p =
   case p of
@@ -59,8 +59,8 @@ foldExpr cCte cRan cSum cRes cMul cDiv p =
 
 eval :: Expr -> Gen -> (Float, Gen)
 eval e = foldExpr
-  (\c -> \g -> (c, g))                               -- Constructor Constante
-  (\l u -> \g -> dameUno (l, u) g)                    -- Constructor Rango
+  (\c -> \g -> (c, g))                 -- Constructor Constante
+  (\l u -> \g -> dameUno (l, u) g)     -- Constructor Rango
   (\r q -> \g -> (procesar (+) r q g)) -- Constructor Suma
   (\r q -> \g -> (procesar (-) r q g)) -- Constructor Resta
   (\r q -> \g -> (procesar (*) r q g)) -- Constructor Mult
