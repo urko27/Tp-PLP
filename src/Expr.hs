@@ -99,41 +99,17 @@ mostrar = recrExpr
   (\c -> show c)
   (\a b -> show a ++ "~" ++ show b)
   (\s1 s2 p q -> 
-    maybeParen (not (
-      constructor p == CEConst || 
-      constructor p == CESuma || 
-      constructor p == CERango)
-    ) s1 ++ " + " ++ maybeParen (constructor p == CERango) s2)
+    mostrarOpDiffs p p s1 s2 [CEConst, CESuma, CERango] [CEConst, CESuma, CEResta, CEMult, CEDiv] " + ")
   (\s1 s2 p q -> 
-    maybeParen (
-      constructor p == CESuma ||
-      constructor p == CEResta
-    ) s1 ++ " - " ++
-    maybeParen (
-      constructor q == CESuma ||
-      constructor q == CEResta
-    ) s2
-  )
+    mostrarOp p q s1 s2 [CEConst, CERango, CEMult, CEDiv] " - ")
   (\s1 s2 p q -> 
-    maybeParen (not (
-      constructor p == CEMult || 
-      constructor p == CEConst ||
-      constructor p == CERango
-    )) s1 ++ " * " ++ 
-    maybeParen (not (
-      constructor q == CEMult ||
-      constructor q == CEConst ||
-      constructor q == CERango
-    )) s2)
+    mostrarOp p q s1 s2 [CEConst, CERango, CEMult] " * ")
   (\s1 s2 p q -> 
-    maybeParen (not (
-      constructor p == CEConst ||
-      constructor p == CERango
-    )) s1 ++ " / " ++ 
-    maybeParen (not (
-      constructor q == CEConst ||
-      constructor q == CERango
-    )) s2)
+    mostrarOp p q s1 s2 [CEConst, CERango] " / ")
+  where
+    processParen t cstrs = maybeParen(not (elem (constructor t) cstrs))
+    mostrarOp p q s1 s2 cstrs op = processParen p cstrs s1 ++ op ++ processParen q cstrs s2
+    mostrarOpDiffs p q s1 s2 cstrsP cstrsQ op = processParen p cstrsP s1 ++ op ++ processParen q cstrsQ s2
 
 data ConstructorExpr = CEConst | CERango | CESuma | CEResta | CEMult | CEDiv
   deriving (Show, Eq)
