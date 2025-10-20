@@ -1,3 +1,5 @@
+NOTA: se puede renderizar a este archivo de forma sencilla presionando ctrl + shift + v en Visual Studio Code si se está desde windows. O bien haciendo click derecho sobre el mismo y eligiendo la opción de ver previsualización (en Visual Studio Code).
+
 # a)
 
 Para demostrar la propiedad del enunciado, realizaremos una demostración por inducción estructural en el tipo de datos abstracto Expr. 
