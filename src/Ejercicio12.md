@@ -81,7 +81,7 @@ $$
 \end{align*}
 $$
 $$
-\text{Sean } \\ . \\ e\ =\ \text{Suma } e_1 \ e_2 \\ .\\ HI \equiv P\ (e_1) \land P(e_2) \\ .\\ \text{Asumimos } HI \text{, luego queremos ver que vale:  } P\ (e_1) \land\ P\ (e_2) \implies P\ (e)
+\text{Sean } \\ . \\ e\ =\ \text{Suma } e_1 \ e_2 \\ .\\ HI \equiv P\ (e_1) \land P(e_2) \\ .\\ \text{Queremos ver que vale:  } (P\ (e_1) \land\ P\ (e_2) \implies P\ (e))
 $$
 #### Dem
 $$
